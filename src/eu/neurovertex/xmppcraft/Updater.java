@@ -1,6 +1,5 @@
 package eu.neurovertex.xmppcraft;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
@@ -17,7 +16,7 @@ import java.util.jar.Manifest;
  */
 public class Updater {
 	private String version;
-	private URL baseURL, updateURL;
+	private URL baseURL;
 
 	public Updater() throws IOException {
 		String resLoc = getClass().getName().replace('.', '/').concat(".class");
@@ -32,7 +31,7 @@ public class Updater {
 			System.out.println("Update jar path : " + updatePath);
 			this.updateURL = new URL(updatePath);
 		}*/
-		URLClassLoader loader = new URLClassLoader(new URL[]{updateURL != null && new File(updateURL.getFile()).exists() ? updateURL : baseURL});
+		URLClassLoader loader = new URLClassLoader(new URL[]{baseURL});
 		URL manifUrl = loader.findResource("META-INF/MANIFEST.MF");
 		Manifest man = new Manifest(manifUrl.openStream());
 		version = getVersion(man);
@@ -57,7 +56,7 @@ public class Updater {
 	}
 
 	public URL getManifestURL() {
-		URLClassLoader loader = new URLClassLoader(new URL[]{updateURL != null && new File(updateURL.getFile()).exists() ? updateURL : baseURL});
+		URLClassLoader loader = new URLClassLoader(new URL[]{baseURL});
 		return loader.findResource("META-INF/MANIFEST.MF");
 	}
 
@@ -76,20 +75,16 @@ public class Updater {
 	}
 
 	public ClassLoader updateClasses(Class<?>... classes) throws IOException {
-		String nv = checkVersion();
-		if (version.compareTo(nv) < 0) {
-			List<String> classNames = new ArrayList<>();
-			for (Class<?> c : classes)
-				classNames.add(c.getName());
-			ClassLoader parent = Thread.currentThread().getContextClassLoader();
-			if (classes.length == 0)
-				while (parent instanceof ParentLastURLClassLoader)
-					parent = parent.getParent();
-			ClassLoader loader = new ParentLastURLClassLoader(parent, Arrays.asList(updateURL != null ? updateURL : baseURL), classNames, classNames.size() > 0);
-			Thread.currentThread().setContextClassLoader(loader);
-			return loader;
-		}
-		return null;
+		List<String> classNames = new ArrayList<>();
+		for (Class<?> c : classes)
+			classNames.add(c.getName());
+		ClassLoader parent = Thread.currentThread().getContextClassLoader();
+		if (classes.length == 0)
+			while (parent instanceof ParentLastURLClassLoader)
+				parent = parent.getParent();
+		ClassLoader loader = new ParentLastURLClassLoader(parent, Arrays.asList(baseURL), classNames, classNames.size() > 0);
+		Thread.currentThread().setContextClassLoader(loader);
+		return loader;
 	}
 
 	/**

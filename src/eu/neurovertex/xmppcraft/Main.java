@@ -22,7 +22,7 @@ import java.util.logging.*;
 
 public class Main {
 	private static final String LOGFILE = "logs/XMPPCraft";
-	private static Logger log;
+	public static Logger log;
 	//private static ThreadGroup threadGroup;
 	private static Main INSTANCE;
 	private Settings settings = new Settings("settings.json");
@@ -104,7 +104,8 @@ public class Main {
 					out.flush();
 					out.close();
 				}
-			} catch (IOException ignore) {} // lol what can you do
+			} catch (IOException ignore) {
+			} // lol what can you do
 			log.severe("Crash detected. Generating report.");
 		}
 	}
@@ -151,19 +152,18 @@ public class Main {
 
 	public boolean update() throws IOException, ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 		ClassLoader newLoader = updater.update();
-		if (newLoader != null) {
-			Class<?> cl = newLoader.loadClass(Main.class.getName());
-
-			Object newMain;
-			Method init = cl.getMethod("init", InputStream.class, PipeOutputStream.class, PipeInputStream.class), start = cl.getMethod("start");
-			try {
-				newMain = cl.newInstance();
-				init.invoke(newMain, oldStdin, stdinPipe, stdoutPipe);
-				stop();
-				start.invoke(newMain);
-				return true;
-			} catch (InstantiationException ignored) {
-			}
+		Class<?> cl = newLoader.loadClass(Main.class.getName());
+		if (Main.class.equals(cl))
+			return false; // Not a new class
+		Object newMain;
+		Method init = cl.getMethod("init", InputStream.class, PipeOutputStream.class, PipeInputStream.class), start = cl.getMethod("start");
+		try {
+			newMain = cl.newInstance();
+			init.invoke(newMain, oldStdin, stdinPipe, stdoutPipe);
+			stop();
+			start.invoke(newMain);
+			return true;
+		} catch (InstantiationException ignored) {
 		}
 		return false;
 	}

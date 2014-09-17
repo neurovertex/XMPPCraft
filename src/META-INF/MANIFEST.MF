@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
-Implementation-Version: 005
+Implementation-Version: 001
 Specification-Title: XMPPCraft
-Specification-Version: 1.2
+Specification-Version: 1.3
 Main-Class: eu.neurovertex.xmppcraft.Main
 

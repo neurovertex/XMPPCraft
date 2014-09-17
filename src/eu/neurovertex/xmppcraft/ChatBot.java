@@ -37,6 +37,7 @@ public class ChatBot implements GameListener, PacketListener, ChatManagerListene
 	private Map<UserRegistry.User, Chat> openChats = new HashMap<>();
 	private MultiUserChat muc;
 	private String JID;
+	private Exception lastException;
 
 	ChatBot() throws SmackException.NotConnectedException, XMPPException, SmackException.NoResponseException {
 		this.gameInput = new PrintStream(Main.getInstance().getPipeToStdin());
@@ -202,7 +203,8 @@ public class ChatBot implements GameListener, PacketListener, ChatManagerListene
 			public CommandResponse execute(ChatBot bot, UserRegistry.User issuer, String command, Source source) {
 				try {
 					String version = Main.getInstance().getUpdater().getVersion(), newVersion = Main.getInstance().getUpdater().checkVersion();
-					if (!version.equals(newVersion)) {
+					boolean force = (command.contains(" ") && command.split(" ")[1].equalsIgnoreCase("-f"));
+					if (!version.equals(newVersion) || force) {
 						String message = String.format(language.getString("core.update.found", "Yes I found your new thing, %s. Give me a minute"), newVersion);
 						mucMessage(message);
 						gameMessage(message);
@@ -214,6 +216,18 @@ public class ChatBot implements GameListener, PacketListener, ChatManagerListene
 				} catch (SmackException.NotConnectedException | ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException | IOException e) {
 					throw new CommandException("Error while checking version", e, Level.SEVERE);
 				}
+			}
+		});
+
+		bot.registerCommand(new PrefixBotCommand("geterror", coreCat, OP, "what was that ?", "what was that") {
+			@Override
+			public CommandResponse execute(ChatBot bot, UserRegistry.User issuer, String command, Source source) {
+				if (lastException == null)
+					return new CommandResponse(language.getString("core.lasterror.null", "What was what ? There's nothing in my logs."));
+				else
+					return new CommandResponse(String.format(language.getString("core.lasterror", "Last error was %s : %s"),
+							lastException.getClass().getName(),
+							lastException.getMessage() != null ? lastException.getMessage() : "no message attached"));
 			}
 		});
 
@@ -327,7 +341,8 @@ public class ChatBot implements GameListener, PacketListener, ChatManagerListene
 					} catch (CommandSyntaxException e) {
 						log.log(Level.INFO, "Syntax error in command " + cmd.getName(), e);
 						return new CommandResponse("You messed up the syntax. You incapable.\n" + cmd.getSyntax());
-					} catch (Throwable e) {
+					} catch (Exception e) {
+						lastException = e;
 						log.log(Level.SEVERE, "Error while executing command", e);
 						return new CommandResponse("It seems something went wrong. Oh well, too bad.");
 					}
