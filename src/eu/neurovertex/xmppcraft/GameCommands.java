@@ -31,7 +31,7 @@ public final class GameCommands {
 	public static void init(ChatBot bot) {
 		String category = "Game";
 
-		bot.registerCommand(new PrefixBotCommand("$", category, OP, "", "$") {
+		bot.registerCommand(new AbstractBotCommand.PrefixBotCommand("$", category, OP, "", "$") {
 			@Override
 			public ChatBot.CommandResponse execute(ChatBot bot, UserRegistry.User issuer, String command, ChatBot.Source source) {
 				List<String> output = bot.gameCommand(command.substring(1), true);
@@ -46,7 +46,7 @@ public final class GameCommands {
 			}
 		});
 
-		bot.registerCommand(new PrefixBotCommand("say", category, USER + 2, "say <message>", "say") {
+		bot.registerCommand(new AbstractBotCommand.PrefixBotCommand("say", category, USER + 2, "say <message>", "say") {
 			@Override
 			public ChatBot.CommandResponse execute(ChatBot bot, UserRegistry.User issuer, String command, ChatBot.Source source) {
 				bot.gameMessage(command.substring(command.indexOf(" ") + 1));
@@ -88,14 +88,14 @@ public final class GameCommands {
 			}
 		});
 
-		bot.registerCommand(new PrefixBotCommand("list", category, ANON, "list", "list") {
+		bot.registerCommand(new AbstractBotCommand.PrefixBotCommand("list", category, ANON, "list", "list") {
 			@Override
 			public ChatBot.CommandResponse execute(ChatBot bot, UserRegistry.User issuer, String command, ChatBot.Source source) {
 				return new ChatBot.CommandResponse(Joiner.on("\n").join(bot.gameCommand("list", true)));
 			}
 		});
 
-		bot.registerCommand(new PrefixBotCommand("getnbt", category, OP, "getnbt <level|#<user>>", "getnbt ") {
+		bot.registerCommand(new AbstractBotCommand.PrefixBotCommand("getnbt", category, OP, "getnbt <level|#<user>>", "getnbt ") {
 			@Override
 			public ChatBot.CommandResponse execute(ChatBot bot, UserRegistry.User issuer, String command, ChatBot.Source source) {
 				String parts[] = command.split(" ");
@@ -126,7 +126,7 @@ public final class GameCommands {
 			}
 		});
 
-		bot.registerCommand(new PrefixBotCommand("locate", category, OP, "locate <gamename>", "locate ") {
+		bot.registerCommand(new AbstractBotCommand.PrefixBotCommand("locate", category, OP, "locate <gamename>", "locate ") {
 			@Override
 			public ChatBot.CommandResponse execute(ChatBot bot, UserRegistry.User issuer, String command, ChatBot.Source source) {
 				String parts[] = command.split(" ");

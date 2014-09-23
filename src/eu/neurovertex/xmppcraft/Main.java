@@ -135,7 +135,7 @@ public class Main {
 		closeables.add(manager);
 		closeables.add(copier);
 		closeables.add(parser);
-		//parser.addGameChatListener(new LogChatListener());
+		//parser.addGameChatListener(new LogChatListener()); // Debugging
 		parser.addGameChatListener(manager.createBot());
 		copier.addConsoleListener(manager.getBot());
 	}

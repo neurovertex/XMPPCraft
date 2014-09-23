@@ -21,10 +21,10 @@ public class NBTPath<E extends Tag> {
 		this.node = node;
 	}
 
+	@SuppressWarnings("unchecked")
 	public E getElement(Tag root) {
 		try {
 			// I know it can fail you butt that's why there's in a try catch
-			//noinspection unchecked
 			return (E) findElement(root);
 			// Compilers I swear ...
 		} catch (ClassCastException e) {
@@ -54,9 +54,9 @@ public class NBTPath<E extends Tag> {
 		return new NBTPath<>(this, new CompoundKey(key));
 	}
 
+	@SuppressWarnings("unchecked")
 	public static <F extends Tag> NBTPath<F> parse(String path) throws NBTPathException {
 		// Yes, unchecked, deal with it
-		//noinspection unchecked
 		return parsePath(path);
 		// I mean it literally, deal with it. Be careful. Catch ClassCastException's
 	}

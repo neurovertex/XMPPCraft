@@ -1,0 +1,14 @@
+{
+  "xmpp.muc.nick": "XMPPCraft",
+  "xmpp.resource": "XMPPCraftTest",
+  "chatbot.capturedelay": 1000.0,
+  "xmpp.status": "Test bot is online",
+  "xmpp.priority": 20.0,
+  "xmpp.server.host": "REPLACE",
+  "xmpp.server.port": 5222.0,
+  "xmpp.muc.jid": "REPLACE",
+  "xmpp.user": "REPLACE",
+  "xmpp.password": "REPLACE",
+  "chatbot.mirror.gametoxmpp": "true",
+  "chatbot.mirror.xmpptogame": "true",
+}

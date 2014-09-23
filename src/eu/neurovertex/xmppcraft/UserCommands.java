@@ -16,7 +16,7 @@ public final class UserCommands {
 
 	public static void init(ChatBot bot) {
 		String category = "User";
-		bot.registerCommand(new PrefixBotCommand("useradd", category, OP, "useradd <gamename|nickname> <name>", "useradd") {
+		bot.registerCommand(new AbstractBotCommand.PrefixBotCommand("useradd", category, OP, "useradd <gamename|nickname> <name>", "useradd") {
 			@Override
 			public ChatBot.CommandResponse execute(ChatBot bot, UserRegistry.User issuer, String command, ChatBot.Source source) {
 				String parts[] = command.split(" ");
@@ -28,7 +28,7 @@ public final class UserCommands {
 			}
 		});
 
-		bot.registerCommand(new PrefixBotCommand("usermod", category, OP, "usermod <name> <JID|level> value", "usermod") {
+		bot.registerCommand(new AbstractBotCommand.PrefixBotCommand("usermod", category, OP, "usermod <name> <JID|level> value", "usermod") {
 			@Override
 			public ChatBot.CommandResponse execute(ChatBot bot, UserRegistry.User issuer, String command, ChatBot.Source source) {
 				String parts[] = command.split(" ");
@@ -72,7 +72,7 @@ public final class UserCommands {
 			}
 		});
 
-		bot.registerCommand(new PrefixBotCommand("userdel", category, OP, "userdel <name>", "userdel") {
+		bot.registerCommand(new AbstractBotCommand.PrefixBotCommand("userdel", category, OP, "userdel <name>", "userdel") {
 			@Override
 			public ChatBot.CommandResponse execute(ChatBot bot, UserRegistry.User issuer, String command, ChatBot.Source source) {
 				String name = command.split(" ")[1];
@@ -86,7 +86,7 @@ public final class UserCommands {
 			}
 		});
 
-		bot.registerCommand(new PrefixBotCommand("lookup", category, OP, "lookup <username <username>|gamename <gamename>|everyone [level] [UUID] [JID]>", "lookup") {
+		bot.registerCommand(new AbstractBotCommand.PrefixBotCommand("lookup", category, OP, "lookup <username <username>|gamename <gamename>|everyone [level] [UUID] [JID]>", "lookup") {
 			@Override
 			public ChatBot.CommandResponse execute(ChatBot bot, UserRegistry.User issuer, String command, ChatBot.Source source) {
 				command = command.substring(7);
@@ -127,7 +127,7 @@ public final class UserCommands {
 			}
 		});
 
-		bot.registerCommand(new RegexBotCommand("nickname", category, USER + 1, "<local name> is <remote name>", Pattern.compile("([^ ]+) is ([^ ]+)")) {
+		bot.registerCommand(new AbstractBotCommand.RegexBotCommand("nickname", category, USER + 1, "<local name> is <remote name>", Pattern.compile("([^ ]+) is ([^ ]+)")) {
 			@Override
 			public ChatBot.CommandResponse execute(ChatBot bot, UserRegistry.User issuer, String command, ChatBot.Source source) {
 				String gamename = getMatcher().group(1), nickname = getMatcher().group(2), tmp;

@@ -48,7 +48,7 @@ public class XMPPChatManager implements ConnectionListener, Closeable {
 		connection.sendPacket(new Presence(Presence.Type.available, status, priority, Presence.Mode.available));
 	}
 
-	public ChatBot createBot() throws SmackException.NotConnectedException, XMPPException, SmackException.NoResponseException {
+	public ChatBot createBot() throws SmackException, XMPPException {
 		bot = new ChatBot();
 		ChatManager.getInstanceFor(connection).addChatListener(bot);
 		return bot;

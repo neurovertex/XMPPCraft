@@ -420,9 +420,9 @@ public class NBTParser {
 					return iterator.hasNext();
 				}
 
+				@SuppressWarnings("unchecked")
 				@Override
 				public E next() {
-					//noinspection unchecked
 					return (E) iterator.next();
 				}
 

@@ -2,8 +2,10 @@ package eu.neurovertex.xmppcraft;
 
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,7 +22,7 @@ public final class XMPPCommands {
 	public static void init(ChatBot bot) {
 		String category = "XMPP";
 
-		bot.registerCommand(new PrefixBotCommand("leave", category, OP, "leave", "leave") {
+		bot.registerCommand(new AbstractBotCommand.PrefixBotCommand("leave", category, OP, "leave", "leave") {
 			@Override
 			public ChatBot.CommandResponse execute(ChatBot bot, UserRegistry.User issuer, String command, ChatBot.Source source) {
 				try {
@@ -34,11 +36,14 @@ public final class XMPPCommands {
 			}
 		});
 
-		bot.registerCommand(new PrefixBotCommand("rejoin", category, OP, "rejoin", "rejoin") {
+		bot.registerCommand(new AbstractBotCommand.PrefixBotCommand("rejoin", category, OP, "rejoin", "rejoin") {
 			@Override
 			public ChatBot.CommandResponse execute(ChatBot bot, UserRegistry.User issuer, String command, ChatBot.Source source) {
 				bot.mucMessage("Updating MUC settings");
 				try {
+					XMPPConnection connection = Main.getInstance().getXMPPManager().getConnection();
+					if (!connection.isConnected())
+						connection.connect();
 					if (bot.getMUC().isJoined())
 						bot.getMUC().leave();
 					bot.init();
@@ -49,11 +54,13 @@ public final class XMPPCommands {
 						throw new ChatBot.CommandException("MUC not joined", Level.WARNING);
 				} catch (XMPPException | SmackException.NoResponseException | SmackException.NotConnectedException e) {
 					throw new ChatBot.CommandException("Error while rejoining", e, Level.SEVERE);
+				} catch (SmackException | IOException e) {
+					throw new ChatBot.CommandException("Error while connecting", e, Level.SEVERE);
 				}
 			}
 		});
 
-		bot.registerCommand(new PrefixBotCommand("log", category, ADMIN, "log [level]", "log ") {
+		bot.registerCommand(new AbstractBotCommand.PrefixBotCommand("log", category, ADMIN, "log [level]", "log ") {
 			@Override
 			public ChatBot.CommandResponse execute(ChatBot bot, UserRegistry.User issuer, String command, ChatBot.Source source) {
 				if (source != ChatBot.Source.PM)
@@ -79,7 +86,7 @@ public final class XMPPCommands {
 			}
 		}.setHelp("Mirrors log to private chat"));
 
-		bot.registerCommand(new PrefixBotCommand("logoff", category, ADMIN, "logoff", "logoff") {
+		bot.registerCommand(new AbstractBotCommand.PrefixBotCommand("logoff", category, ADMIN, "logoff", "logoff") {
 			@Override
 			public ChatBot.CommandResponse execute(ChatBot bot, UserRegistry.User issuer, String command, ChatBot.Source source) {
 				Chat chat = bot.getChat(issuer);
